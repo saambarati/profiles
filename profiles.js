@@ -69,6 +69,7 @@ Profiles.prototype.times = function(name) {
 
 function ProfilesStream (profiles) {
   if (!(this instanceof ProfilesStream)) return new ProfilesStream(profiles)
+  if (!profiles || !(profiles instanceof Profiles)) throw new Error('need a profiles object to create a ProfilesStream')
 
   Stream.call(this)
   this.readable = true  
