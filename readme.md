@@ -19,8 +19,12 @@ Each test also comes with its own acessor method that is the same as the name of
 
     profiles.beg('test1')
     //do something
+    profiles.beg('test2')
+    //do something else
+    profiles.end('test2')
     profiles.end('test1') 
     console.log(profiles.test1)
+    console.log(profiles.test2)
 
 will print the time it took between the last suite duo of  `beg('test1')` and `end('test1')`.
 
