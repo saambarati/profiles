@@ -1,6 +1,8 @@
 
 var profiler = require('./profiles.js')()
    , assert = require('assert')
+   , profiles = require('./profiles.js')
+   , pStream = new profiles.ProfilesStream(profiler)
 
 var total = [0,1]
 function fib(num) {
@@ -22,7 +24,8 @@ function testSet() {
     if ((i % 2)) {
       profiler.beg('test')   
     } else {
-      console.log('t:%d is %d', i, profiler.end('test'))
+      //console.log('t:%d is %d', i, profiler.end('test'))
+      profiler.end('test')
     }
     i+=1
     if (i < 20) {
@@ -33,9 +36,15 @@ function testSet() {
   }, 100)
 }
 testSet()
+//profiler.on('profile', function (name, time){
+//  console.log('profile name: %s took %d ms', name, time)
+//})
+
+console.log('piping')
+pStream.pipe(process.stdout)
 
 function finished() {
-  var reduced = profiler.reduce('test')
+  var reduced = profiler.compact('test')
   //console.log('reduced times: ' + reduced)
   //console.log('the final time was ' + profiler.test)
   //console.log('beggining times: ' + profiler.times('test')[0])
