@@ -4,7 +4,7 @@ Profiles
 
 Profiles is a simple way to profile different parts of your app.
 
-### Install
+#### Install
 
     npm install profiles
 
