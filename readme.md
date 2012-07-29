@@ -4,6 +4,10 @@ Profiles
 
 Profiles is a simple way to profile different parts of your app.
 
+### Install
+
+    npm install profiles
+
 ### API
 
     var profiles = require('profiles')()
@@ -47,6 +51,7 @@ To access the begging and ending array call the following functions:
     profiles.begArr(name)
     profiles.endArr(name)
     var both = profiles.times(name) //this will return a two-dimensional array taking the form: [ begArr(name), endArr(name) ]
+ 
 
 ##### MIT License
 
