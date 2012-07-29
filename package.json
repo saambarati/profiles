@@ -1,12 +1,15 @@
 {
   "name": "profiles",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "description": "Minimal profiling library.",
-  "main": "./profiler.js",
+  "main": "./profiles.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node ./test.js"
   },
-  "repository": "",
+  "repository": {
+    "type" : "git",
+    "repository" : "https://github.com/saambarati/profiles.git"
+  },
   "keywords": [
     "profiler",
     "profile",

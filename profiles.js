@@ -3,40 +3,56 @@ function createProfiler() {
   var times = {} 
     , me = {}
 
+  function begArr(name) {
+    return times['beg_'+name]
+  }
+  function endArr(name) {
+    return times['end_'+name]
+  }
+  me.begArr = begArr
+  me.endArr = endArr
+
   me.beg = function(name) {
-    var begArr = times['beg_'+name]
-      , endArr
-    if (!begArr) {
-      begArr = []
-      endArr = []
-      times['beg_'+name] = begArr
-      times['end_'+name] = endArr
+    var beg = begArr(name)
+      , end
+    if (!beg) {
+      beg = []
+      end = []
+      times['beg_'+name] = beg
+      times['end_'+name] = end
       Object.defineProperty(me, name, {
         get : function() {
-          var i = endArr.length-1
-          return endArr[i] - begArr[i]
+          var i = end.length-1
+          return end[i] - beg[i]
         }
       })
     }
 
-    begArr.push(Date.now())
+    beg.push(Date.now())
     return this
   }
 
   me.end = function(name) {
-    times['end_'+name].push(Date.now())
-    return this
+    var d = Date.now()
+       , end = endArr(name)
+       , beg = begArr(name)
+    end.push(d)
+    return me[name] //accessor method
   }
 
   me.reduce = function(name) {
     var totals = []
-      , begArr = times['beg_'+name]
-      , endArr = times['end_'+name]
+      , beg = begArr(name)
+      , end = endArr(name)
       , i 
-    for (i = 0; i < endArr.length; i++) {
-      totals[i] = endArr[i] - begArr[i]
+    for (i = 0; i < end.length; i++) {
+      totals[i] = end[i] - beg[i]
     }
     return totals
+  }
+
+  me.times = function(name) {
+    return [ begArr(name), endArr(name) ]
   }
 
   return me
