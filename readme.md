@@ -20,23 +20,23 @@ Each test also comes with its own acessor method that is the same as the name of
 
 will print the time it took between the last suite duo of  `beg('test1')` and `end('test1')`.
 
-You can also run a suite of profiles for one given name and profiler will collect an array of beginning and ending time values.
-Profiler also provides a convenience `reduce` method to take the ending array and the beginning array and produces a new array with the diffs between their times.
+You can also run a suite of profiles for one given name and profiles will collect an array of beginning and ending time values.
+Profiles also provides a convenience `reduce` method to take the ending array and the beginning array and produces a new array with the diffs between their times.
 
 
     var i = 1
     function testSet() {
       setTimeout(function() {
         if ((i % 2)) {
-          profiler.beg('test')
+          profiles.beg('test')
         } else {
-          console.log(profiler.end('test')) //prints the most current profile time
+          console.log(profiles.end('test')) //prints the most current profile time
         }
         i+=1
         if (i < 20) {
           testSet()
         } else {
-          console.log(profiler.reduce('test')) //will print a new array
+          console.log(profiles.reduce('test')) //will print a new array
         }
       }, 100)
     }
@@ -44,9 +44,9 @@ Profiler also provides a convenience `reduce` method to take the ending array an
 
 To access the begging and ending array call the following functions:
 
-    profiler.begArr(name)
-    profiler.endArr(name)
-    var both = profiler.times(name) //this will return a two-dimensional array taking the form: [ begArr(name), endArr(name) ]
+    profiles.begArr(name)
+    profiles.endArr(name)
+    var both = profiles.times(name) //this will return a two-dimensional array taking the form: [ begArr(name), endArr(name) ]
 
 ##### MIT License
 
