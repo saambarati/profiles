@@ -33,10 +33,9 @@ function createProfiler() {
   }
 
   me.end = function(name) {
-    var d = Date.now()
-       , end = endArr(name)
+    var end = endArr(name)
        , beg = begArr(name)
-    end.push(d)
+    end.push(Date.now())
     return me[name] //accessor method
   }
 

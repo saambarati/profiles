@@ -22,7 +22,7 @@ function testSet() {
     if ((i % 2)) {
       profiler.beg('test')   
     } else {
-      console.log(profiler.end('test'))
+      console.log('t:%d is %d', i, profiler.end('test'))
     }
     i+=1
     if (i < 20) {
@@ -36,14 +36,14 @@ testSet()
 
 function finished() {
   var reduced = profiler.reduce('test')
-  console.log('reduced times: ' + reduced)
-  console.log('the final time was ' + profiler.test)
-  console.log('beggining times: ' + profiler.times('test')[0])
-  console.log('ending times: ' + profiler.times('test')[1])
+  //console.log('reduced times: ' + reduced)
+  //console.log('the final time was ' + profiler.test)
+  //console.log('beggining times: ' + profiler.times('test')[0])
+  //console.log('ending times: ' + profiler.times('test')[1])
 
-  profiler.beg('fib')
-  fib(1000)
-  console.log('fib sequence took: %d ms',profiler.end('fib'))
+  //profiler.beg('fib')
+  //fib(1000)
+  //console.log('fib sequence took: %d ms',profiler.end('fib'))
 
   assert(reduced[reduced.length-1] === profiler.test) //test accessor method
   assert(profiler.times('test'))
