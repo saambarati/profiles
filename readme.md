@@ -82,7 +82,7 @@ Accessing the stats array is easy: `profiles.stats.statName`
 ### Events
 Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function:
 
-     function(profileName, time) {}
+     function(profileName, value) {}
 
 ### ProfilesStream
 You can also wrap your profiler in a `readable stream`:
