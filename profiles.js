@@ -55,6 +55,7 @@ Profiles.prototype.stat = function(name, val) {
   if (Array.isArray(this.stats[name])) this.stats[name].push(val)
   else this.stats[name] = [ val ] //TODO: should I define a property--getter?
   this.emit('profile', name, val) 
+  return val
 }
 
 Profiles.prototype.compact = function(name) {

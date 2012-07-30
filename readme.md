@@ -60,8 +60,8 @@ To access the begging and ending array call the following functions:
 
 
 ### Stats
-You can also create status about certain parts of your app using the `profiler.stat(name, value)` API. If you wanted to stat how 
-many request per second your server is handling, you could do the following:
+You can also create stats about certain parts of your app using the `profiler.stat(name, value)` API. If you want to stat how 
+many request per second your server is handling, you can do the following (this ties in nicely with `ProfilesStream`):
 
     var reqPerSec = 0
     function serve(req, res) {
@@ -75,6 +75,8 @@ many request per second your server is handling, you could do the following:
       reqPerSec = 0
     }, 1000)
     profiles.ProfilesStream(profiler).pipe(process.stdout)
+
+Accessing the stats array is easy: `profiles.stats.statName`
 
 
 ### Events
@@ -91,9 +93,9 @@ You can also wrap your profiler in a `readable stream`:
 
     pStream.pipe(process.stdout)
 
-`ProfilesStream` just listens in on the `profile` event and emits JSON buffers that have the following format:
+`ProfilesStream` just listens in on the `"profile"` event and emits JSON `Buffer` objects that have the following format:
     
-    {'name' : aName, 'val': aValue}
+    {'name' : nameOfStatOrTime, 'val': itsValue}
 
 
 ##### MIT License
