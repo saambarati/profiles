@@ -15,7 +15,7 @@ Profiles is a simple way to profile different parts of your app.
     //do something
     profiles.end('test1') //returns the resulting time between beg/end of 'test1'
 
-Each test also comes with its own acessor method that is the same as the name of the test, so:
+Each profile also comes with its own acessor method that is the same as the name of the profile, so:
 
     profiles.beg('test1')
     //do something
@@ -26,7 +26,7 @@ Each test also comes with its own acessor method that is the same as the name of
     console.log(profiles.test1)
     console.log(profiles.test2)
 
-will print the time it took between the last suite duo of  `beg('test1')` and `end('test1')`.
+will print the time it took between the `beg('test1')` and `end('test1')` calls.
 
 You can also run a suite of profiles for one given name and profiles will collect an array of beginning and ending time values.
 Profiles also provides a convenience `compact` method to take the ending array and the beginning array and produces a new array with the diffs between their times.
