@@ -14,8 +14,7 @@ function serve(req, res) {
 
 profiles.ProfilesStream(profiler).pipe(process.stdout)
 
-server = http.createServer(serve)
-server.listen(8081)
+http.createServer(serve).listen(8081)
 
 setInterval(function() {
   profiler.stat('perSec', reqPerSec)
