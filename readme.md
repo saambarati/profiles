@@ -8,7 +8,9 @@ Profiles is a simple way to profile different parts of your app.
 
     npm install profiles
 
-### API
+## API
+
+### Timing
 
     var profiles = require('profiles')()
     profiles.beg('test1')
@@ -55,12 +57,43 @@ To access the begging and ending array call the following functions:
     profiles.begArr(name)
     profiles.endArr(name)
     var both = profiles.times(name) //this will return a two-dimensional array taking the form: [ begArr(name), endArr(name) ]
- 
+
+
+### Stats
+You can also create status about certain parts of your app using the `profiler.stat(name, value)` API. If you wanted to stat how 
+many request per second your server is handling, you could do the following:
+
+    var reqPerSec = 0
+    function serve(req, res) {
+      reqPerSec +=1
+      res.setHeader('content-type', 'text/plain')
+      res.end('request per sec #' + reqPerSec)
+    }
+    http.createServer(serve).listen(1337)
+    setInterval(function() {
+      profiler.stat('perSec', reqPerSec)
+      reqPerSec = 0
+    }, 1000)
+    profiles.ProfilesStream(profiler).pipe(process.stdout)
+
 
 ### Events
 Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function:
 
      function(profileName, time) {}
+
+### ProfilesStream
+You can also wrap your profiler in a `readable stream`:
+
+    var profiles = require('profiles')
+      , profiler = profiles()
+      , pStream = new profiles.ProfilesStream(profiler)
+
+    pStream.pipe(process.stdout)
+
+`ProfilesStream` just listens in on the `profile` event and emits JSON buffers that have the following format:
+    
+    {'name' : aName, 'val': aValue}
 
 
 ##### MIT License

@@ -7,6 +7,7 @@ function Profiles () {
   if (!(this instanceof Profiles)) return new Profiles()
   events.EventEmitter.call(this)
   this.profiles = {}
+  this.stats = {}
 }
 util.inherits(Profiles, events.EventEmitter)
 
@@ -50,6 +51,12 @@ Profiles.prototype.end = function(name) {
   return time
 }
 
+Profiles.prototype.stat = function(name, val) {
+  if (Array.isArray(this.stats[name])) this.stats[name].push(val)
+  else this.stats[name] = [ val ] //TODO: should I define a property--getter?
+  this.emit('profile', name, val) 
+}
+
 Profiles.prototype.compact = function(name) {
   var totals = []
     , beg = this.begArr(name)
@@ -82,8 +89,7 @@ function ProfilesStream (profiles) {
 util.inherits(ProfilesStream, Stream)
 
 ProfilesStream.prototype.emitShit = function(name, time) {
-  //emit JSON strings
-  var emitObj = {'name' : name, 'time' : time}
+  var emitObj = {'name' : name, 'val' : time}
   emitObj = new Buffer(JSON.stringify(emitObj), 'utf8')
   
   if (this.paused) {
@@ -100,13 +106,12 @@ ProfilesStream.prototype.pause = function() {
 
 ProfilesStream.prototype.resume = function() {
   var i
-  for (i = 0; i < this.buffers.length; i++) {
+  this.paused = false
+  for (i = 0; i < this.buffers.length && this.paused === false; i++) {
     this.emit('data', this.buffers[i])
   }
-
-  delete this.buffers
-  this.buffers = []
-  this.paused = false
+  //note, if we are paused again during a resume, we will maintain our place. If we aren't paused, slicing buffers.length will return an empty array
+  this.buffers = this.buffers.slice(i)
 }
 
 
