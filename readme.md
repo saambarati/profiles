@@ -58,8 +58,10 @@ To access the begging and ending array call the following functions:
  
 
 ### Events
-Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function like:
+Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function:
+
      function(profileName, time) {}
+
 
 ##### MIT License
 
