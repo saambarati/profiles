@@ -83,7 +83,7 @@ util.inherits(ProfilesStream, Stream)
 
 ProfilesStream.prototype.emitShit = function(name, time) {
   //emit JSON strings
-  var emitObj = {'profileName' : name, 'time' : time}
+  var emitObj = {'name' : name, 'time' : time}
   emitObj = new Buffer(JSON.stringify(emitObj), 'utf8')
   
   if (this.paused) {
