@@ -84,14 +84,22 @@ function ProfilesStream (profiles) {
   this.writable = false
   this.paused = false
   this.buffers = []
+  this.filters = []
 
   profiles.on('profile', this.emitShit.bind(this))
 }
 util.inherits(ProfilesStream, Stream)
 
+ProfilesStream.prototype.filter = function() {
+  this.filters = this.filters.concat(Array.prototype.slice.apply(arguments))
+
+  return this
+}
+
 ProfilesStream.prototype.emitShit = function(name, time) {
+  if (this.filters.length && this.filters.indexOf(name) === -1) return
   var emitObj = {'name' : name, 'val' : time}
-  emitObj = new Buffer(JSON.stringify(emitObj), 'utf8')
+  emitObj = new Buffer(JSON.stringify(emitObj) + '\n', 'utf8')
   
   if (this.paused) {
     this.buffers.push(emitObj)
@@ -111,7 +119,8 @@ ProfilesStream.prototype.resume = function() {
   for (i = 0; i < this.buffers.length && this.paused === false; i++) {
     this.emit('data', this.buffers[i])
   }
-  //note, if we are paused again during a resume, we will maintain our place. If we aren't paused, slicing buffers.length will return an empty array
+  //note, if we are paused again during a resume, we will maintain our place in unloading buffers.
+  //if we don't get re-paused, slicing @ buffers.length will return an empty array
   this.buffers = this.buffers.slice(i)
 }
 
