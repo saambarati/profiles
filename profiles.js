@@ -82,11 +82,14 @@ function ProfilesStream (profiles) {
   Stream.call(this)
   this.readable = true  
   this.writable = false
-  this.paused = false
+  this.paused = true
   this.buffers = []
   this.filters = []
 
   profiles.on('profile', this.emitShit.bind(this))
+  process.nextTick(function() {
+    this.resume()
+  }.bind(this))
 }
 util.inherits(ProfilesStream, Stream)
 
@@ -128,6 +131,7 @@ ProfilesStream.prototype.resume = function() {
 module.exports = Profiles
 module.exports.Profiles = Profiles
 module.exports.ProfilesStream = ProfilesStream
+module.exports.PS = ProfilesStream
 
 
 

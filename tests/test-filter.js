@@ -19,5 +19,4 @@ setInterval(function() {
   profiler.stat('three', 200)
 }, 1000)
 
-profiles.ProfilesStream(profiler).filter('one', 'two').pipe(process.stdout)
-
+profiles.PS(profiler).filter('one', 'two').pipe(process.stdout)
