@@ -2,61 +2,23 @@
 Profiles
 ========
 
+
 Profiles is a simple way to profile different parts of your app.
 
 #### Install
 
     npm install profiles
 
+
 ## API
+### Note, These API's *will* change
 
 ### Timing
 
     var profiles = require('profiles')()
-    profiles.beg('test1')
-    //do something
-    profiles.end('test1') //returns the resulting time between beg/end of 'test1'
-
-Each profile also comes with its own acessor method that is the same as the name of the profile, so:
-
-    profiles.beg('test1')
-    //do something
-    profiles.beg('test2')
-    //do something else
-    profiles.end('test2')
-    profiles.end('test1') 
-    console.log(profiles.test1)
-    console.log(profiles.test2)
-
-will print the time it took between the `beg('test1')` and `end('test1')` calls.
-
-You can also run a suite of profiles for one given name and profiles will collect an array of beginning and ending time values.
-Profiles also provides a convenience `compact` method to take the ending array and the beginning array and produces a new array with the diffs between their times.
-
-
-    var i = 1
-    function testSet() {
-      setTimeout(function() {
-        if ((i % 2)) {
-          profiles.beg('test')
-        } else {
-          console.log(profiles.end('test')) //prints the most current profile time
-        }
-        i+=1
-        if (i < 20) {
-          testSet()
-        } else {
-          console.log(profiles.compact('test')) //will print a new array
-        }
-      }, 100)
-    }
-    testSet()
-
-To access the begging and ending array call the following functions:
-
-    profiles.begArr(name)
-    profiles.endArr(name)
-    var both = profiles.times(name) //this will return a two-dimensional array taking the form: [ begArr(name), endArr(name) ]
+    var end = profiles.beg('test1')
+    //do something that will take some time
+    end() //returns the time from beg to the time end was invoked
 
 
 ### Stats
@@ -74,28 +36,32 @@ many request per second your server is handling, you can do the following (this 
       profiler.stat('perSec', reqPerSec)
       reqPerSec = 0
     }, 1000)
-    profiles.ProfilesStream(profiler).pipe(process.stdout)
-
-Accessing the stats array is easy: `profiles.stats.statName`
+    profiles.PS(profiler).pipe(process.stdout)
 
 
 ### Events
 Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function:
 
-     function(profileName, value) {}
+     function(profileName, value, profileType) {}
+     /*
+      * profileName will be the name of the stat or time
+      * value is the 'time' it took  before the end() function was invoked or the 'stat' value when you call stat()
+      * profileType will be the type of profile you invoked, so: 'stat' or 'time'
+     */
 
 ### ProfilesStream
 You can also wrap your profiler in a `readable stream`:
 
     var profiles = require('profiles')
       , profiler = profiles()
-      , pStream = new profiles.ProfilesStream(profiler)
+      , pStream = new profiles.PS(profiler)
+      // OR:  pStream = new profiles.ProfilesStream(profiler)
 
     pStream.pipe(process.stdout)
 
-`ProfilesStream` just listens in on the `"profile"` event and emits JSON `Buffer` objects that have the following format:
+`ProfilesStream` just listens in on the `"profile"` event and emits `\n` delimited JSON string `Buffer` objects that have the following format:
     
-    {'name' : nameOfStatOrTime, 'val': itsValue}
+    {'name' : nameOfStatOrTime, 'val': itsValue, '__profileType' : 'time' OR 'stat'}
 
 
 ##### MIT License

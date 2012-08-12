@@ -2,94 +2,67 @@
 var util = require('util')
   , events = require('events')
   , Stream = require('stream')
+  //constants
+  , kTypeTime = 'time'
+  , kTypeStat = 'stat'
 
 function Profiles () {
   if (!(this instanceof Profiles)) return new Profiles()
   events.EventEmitter.call(this)
-  this.profiles = {}
-  this.stats = {}
 }
 util.inherits(Profiles, events.EventEmitter)
 
-
-Profiles.prototype.begArr = function begArr(name) {
-  return this.profiles['__beg_'+name]
-}
-
-Profiles.prototype.endArr = function endArr(name) {
-  return this.profiles['__end_'+name]
-}
-
 Profiles.prototype.beg = function(name) {
-  var beg = this.begArr(name)
-    , end
-  if (!beg) {
-    beg = []
-    end = []
-    this.profiles['__beg_'+name] = beg
-    this.profiles['__end_'+name] = end
-    Object.defineProperty(this, name, {
-      get : function() {
-        var i = end.length-1
-        return end[i] - beg[i]
-      }
-    })
+  var begin = Date.now()
+     , ender
+     , self = this
+
+  ender = function() {
+    var time = Date.now() - begin
+    self.emit('profile', name, time, kTypeTime)
+    return time
   }
-
-  beg.push(Date.now())
-  return this
-}
-
-Profiles.prototype.end = function(name) {
-  var d = Date.now()
-     , end = this.endArr(name)
-     , beg = this.begArr(name)
-     , time
-  end.push(d)
-  time = this[name]
-  this.emit('profile', name, time)
-  return time
+  return ender
 }
 
 Profiles.prototype.stat = function(name, val) {
-  if (Array.isArray(this.stats[name])) this.stats[name].push(val)
-  else this.stats[name] = [ val ] //TODO: should I define a property--getter?
-  this.emit('profile', name, val) 
-  return val
-}
-
-Profiles.prototype.compact = function(name) {
-  var totals = []
-    , beg = this.begArr(name)
-    , end = this.endArr(name)
-    , i 
-  for (i = 0; i < end.length; i++) {
-    totals[i] = end[i] - beg[i]
-  }
-  return totals
-}
-
-Profiles.prototype.times = function(name) {
-  return [ this.begArr(name), this.endArr(name) ]
+  this.emit('profile', name, val, kTypeStat)
+  return this
 }
 
 
-
-function ProfilesStream (profiles) {
-  if (!(this instanceof ProfilesStream)) return new ProfilesStream(profiles)
+function ProfilesStream (profiles, endAfter) {
+  if (!(this instanceof ProfilesStream)) return new ProfilesStream(profiles, endAfter)
   if (!profiles || !(profiles instanceof Profiles)) throw new Error('need a profiles object to create a ProfilesStream')
 
-  Stream.call(this)
-  this.readable = true  
-  this.writable = false
-  this.paused = true
-  this.buffers = []
-  this.filters = []
+  var emitFunc = this.emitShit.bind(this)
+    , self = this
 
-  profiles.on('profile', this.emitShit.bind(this))
-  process.nextTick(function() {
-    this.resume()
-  }.bind(this))
+  Stream.call(this)
+  self.readable = true  
+  self.writable = false
+  self.paused = true
+  self.buffers = []
+  self.filters = []
+  self._alreadyEnded = false
+
+  profiles.on('profile', emitFunc)
+  process.nextTick(function() { //wait until nextTick to begin emitting data
+    self.resume()
+  })
+
+  function end() {
+    if (self._alreadyEnded) return
+    self._alreadyEnded = true
+    profiles.removeListener('profile', emitFunc)
+    self.emit('end')
+    delete self.buffers
+    delete self.filters
+  }
+  self.once('error', end)
+  if (endAfter) {
+    setTimeout(end, endAfter)
+  }
 }
 util.inherits(ProfilesStream, Stream)
 
@@ -99,9 +72,10 @@ ProfilesStream.prototype.filter = function() {
   return this
 }
 
-ProfilesStream.prototype.emitShit = function(name, time) {
+ProfilesStream.prototype.emitShit = function(name, time, type) {
   if (this.filters.length && this.filters.indexOf(name) === -1) return
-  var emitObj = {'name' : name, 'val' : time}
+
+  var emitObj = {'name' : name, 'val' : time, '__profileType' : type }
   emitObj = new Buffer(JSON.stringify(emitObj) + '\n', 'utf8')
   
   if (this.paused) {
