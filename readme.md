@@ -22,7 +22,7 @@ Profiles is a simple way to profile different parts of your app.
 
 
 ### Stats
-You can also create stats about certain parts of your app using the `profiler.stat(name, value)` API. If you want to stat how 
+You can also create stats about certain parts of your app using the `profiler.stat(name, value)` API. If you want to stat how
 many request per second your server is handling, you can do the following (this ties in nicely with `ProfilesStream`):
 
     var reqPerSec = 0
@@ -42,7 +42,7 @@ many request per second your server is handling, you can do the following (this 
 ### Events
 Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function:
 
-     function(profileName, value, profileType) {}
+     profiles.on('profile', function(profileName, value, profileType) {})
      /*
       * profileName will be the name of the stat or time
       * value is the 'time' it took  before the end() function was invoked or the 'stat' value when you call stat()
@@ -60,7 +60,7 @@ You can also wrap your profiler in a `readable stream`:
     pStream.pipe(process.stdout)
 
 `ProfilesStream` just listens in on the `"profile"` event and emits `\n` delimited JSON string `Buffer` objects that have the following format:
-    
+
     {'name' : nameOfStatOrTime, 'val': itsValue, '__profileType' : 'time' OR 'stat'}
 
 

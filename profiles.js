@@ -39,7 +39,7 @@ function ProfilesStream (profiles, endAfter) {
     , self = this
 
   Stream.call(this)
-  self.readable = true  
+  self.readable = true
   self.writable = false
   self.paused = true
   self.buffers = []
@@ -77,7 +77,7 @@ ProfilesStream.prototype.emitShit = function(name, time, type) {
 
   var emitObj = {'name' : name, 'val' : time, '__profileType' : type }
   emitObj = new Buffer(JSON.stringify(emitObj) + '\n', 'utf8')
-  
+
   if (this.paused) {
     this.buffers.push(emitObj)
   } else {

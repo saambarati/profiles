@@ -1,14 +1,14 @@
 {
   "name": "profiles",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Minimal profiling library.",
   "main": "./profiles.js",
   "scripts": {
-    "test": "node ./test.js"
+    "test": "node ./tests/test-filter-time.js"
   },
   "repository": {
     "type" : "git",
-    "repository" : "https://github.com/saambarati/profiles.git"
+    "url" : "https://github.com/saambarati/profiles.git"
   },
   "keywords": [
     "profiler",
