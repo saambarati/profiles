@@ -42,11 +42,12 @@ many request per second your server is handling, you can do the following (this 
 ### Events
 Profiles is also an instance of EventEmitter so you can listen to the `profile` event which takes a listener function:
 
-     profiles.on('profile', function(profileName, value, profileType) {})
+     profiles.on('profile', function(profileName, value, profileType, uid) {})
      /*
       * profileName will be the name of the stat or time
       * value is the 'time' it took  before the end() function was invoked or the 'stat' value when you call stat()
       * profileType will be the type of profile you invoked, so: 'stat' or 'time'
+      * uid is a unique ID, currently this is just Date.now()
      */
 
 ### ProfilesStream
@@ -61,7 +62,7 @@ You can also wrap your profiler in a `readable stream`:
 
 `ProfilesStream` just listens in on the `"profile"` event and emits `\n` delimited JSON string `Buffer` objects that have the following format:
 
-    {'name' : nameOfStatOrTime, 'val': itsValue, '__profileType' : 'time' OR 'stat'}
+    {'name' : nameOfStatOrTime, 'val': itsValue, '__profileType' : 'time' OR 'stat', __uid : ID }
 
 
 ##### MIT License

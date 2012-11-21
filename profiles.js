@@ -6,6 +6,10 @@ var util = require('util')
   , kTypeTime = 'time'
   , kTypeStat = 'stat'
 
+//return a unique id
+function uid() {
+  return Date.now() //TODO, consider something more mathematically comprehensive
+}
 function Profiles () {
   if (!(this instanceof Profiles)) return new Profiles()
   events.EventEmitter.call(this)
@@ -19,14 +23,14 @@ Profiles.prototype.beg = function(name) {
 
   ender = function() {
     var time = Date.now() - begin
-    self.emit('profile', name, time, kTypeTime)
+    self.emit('profile', name, time, kTypeTime, uid())
     return time
   }
   return ender
 }
 
 Profiles.prototype.stat = function(name, val) {
-  this.emit('profile', name, val, kTypeStat)
+  this.emit('profile', name, val, kTypeStat, uid())
   return this
 }
 
@@ -72,10 +76,15 @@ ProfilesStream.prototype.filter = function() {
   return this
 }
 
-ProfilesStream.prototype.emitShit = function(name, time, type) {
+ProfilesStream.prototype.emitShit = function(name, time, type, uid) {
   if (this.filters.length && this.filters.indexOf(name) === -1) return
 
-  var emitObj = {'name' : name, 'val' : time, '__profileType' : type }
+  var emitObj = {
+    name : name
+    , val : time
+    , __profileType : type
+    , __uid : uid
+  }
   emitObj = new Buffer(JSON.stringify(emitObj) + '\n', 'utf8')
 
   if (this.paused) {
